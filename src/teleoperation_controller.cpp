@@ -13,13 +13,6 @@ private:
   ros::NodeHandle* nh_;
   std_msgs::UInt8 gripper_command_msg;
 
-public:
-  TeleoperationController(ros::NodeHandle* node_handle) : nh_(node_handle) 
-  {
-    gripper_command_pub_ = nh_->advertise<std_msgs::UInt8>("gripper_in_position", 1);
-    omega_position_sub_ = nh_->subscribe("omega_out_grip_angle", 1, &TeleoperationController::positionCallback, this);
-  }
-
   void positionCallback(const std_msgs::Float64::ConstPtr& msg)
   {
     double omega_grip_gap = msg->data;
@@ -27,6 +20,13 @@ public:
     printf("%d\n", gripper_position_desired);
     gripper_command_msg.data = gripper_position_desired;
     gripper_command_pub_.publish(gripper_command_msg);
+  }
+
+public:
+  TeleoperationController(ros::NodeHandle* node_handle) : nh_(node_handle) 
+  {
+    gripper_command_pub_ = nh_->advertise<std_msgs::UInt8>("gripper_in_position", 1);
+    omega_position_sub_ = nh_->subscribe("omega_out_grip_angle", 1, &TeleoperationController::positionCallback, this);
   }
 };
 
